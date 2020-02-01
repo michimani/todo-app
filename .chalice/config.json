@@ -1,0 +1,18 @@
+{
+  "version": "2.0",
+  "app_name": "todo-app",
+  "api_gateway_stage": "api",
+  "stages": {
+    "dev": {
+      "environment_variables": {
+        "DB_ENDPOINT": "http://localhost:8001",
+        "DB_TABLE_NAME": "todos"
+      }
+    },
+    "prod": {
+      "environment_variables": {
+        "DB_TABLE_NAME": "todos"
+      }
+    }
+  }
+}

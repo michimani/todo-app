@@ -1,0 +1,7 @@
+.chalice/deployments/
+.chalice/deployed/*.json
+.chalice/venv/
+
+
+# DynamoDb local
+shared-local-instance.db
