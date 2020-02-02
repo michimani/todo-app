@@ -4,18 +4,17 @@ import time
 import json
 
 app = Chalice(app_name='todo-app')
-dynamo = db.get_db()
 
 
 @app.route('/todo', methods=['GET'])
 def list_todo():
-    todos = dynamo.scan()
+    todos = db.scan_todo()
     return return_response(todos['Items'], 200)
 
 
 @app.route('/todo/{todo_id}', methods=['GET'])
 def get_todo(todo_id):
-    res = dynamo.get_item(Key={'Id': todo_id})
+    res = db.get_todo(todo_id)
 
     if 'Item' not in res:
         return return_response({
@@ -28,7 +27,7 @@ def get_todo(todo_id):
 
 @app.route('/todo/{todo_id}', methods=['DELETE'])
 def delete_todo(todo_id):
-    dynamo.delete_item(Key={'Id': str(todo_id)})
+    db.delete_todo(todo_id)
     return return_response({}, 200)
 
 
@@ -52,8 +51,7 @@ def add_todo():
         if 'content' in req_body:
             new_todo['Content'] = req_body['content']
 
-        res = dynamo.put_item(Item=new_todo,
-                              ConditionExpression='attribute_not_exists(Id)')
+        res = db.put_todo(new_todo)
 
         if res['ResponseMetadata']['HTTPStatusCode'] != 200:
             return return_response({
