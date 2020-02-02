@@ -10,9 +10,7 @@ todo-app
   
     ```zsh
     $ export DYNAMODB_LOCAL_DIR=your_dynamo_db_local_path
-    $ java -Djava.library.path=$DYNAMODB_LOCAL_DIR/DynamoDBLocal_lib \
-    -jar $DYNAMODB_LOCAL_DIR/DynamoDBLocal.jar \
-    -sharedDb -port 8001
+    $ sh start_local_db.sh
     ```
 
 3. create table
@@ -26,13 +24,24 @@ todo-app
 # Run at local
 
 1. start DynamoDB local
+
+    ```zsh
+    $ sh start_local_db.sh
+    ```
+
 2. run following command
 
     ```zsh
-    $ chalice local
+    $ chalice local --stage dev
     Found credentials in shared credentials file: ~/.aws/credentials
     Serving on http://127.0.0.1:8000
     ```
+
+# Test
+
+```zsh
+$ python -m pytest
+```
 
 # Deploy to AWS
 
