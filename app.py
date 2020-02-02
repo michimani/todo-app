@@ -8,9 +8,22 @@ dynamo = db.get_db()
 
 
 @app.route('/todo', methods=['GET'])
-def get_todo():
+def list_todo():
     todos = dynamo.scan()
     return return_response(todos['Items'], 200)
+
+
+@app.route('/todo/{todo_id}', methods=['GET'])
+def get_todo(todo_id):
+    res = dynamo.get_item(Key={'Id': todo_id})
+
+    if 'Item' not in res:
+        return return_response({
+            'message': 'not found error: todo with Id = {todo_id} was not found'
+            .format(todo_id=todo_id)
+        }, 404)
+
+    return return_response(res['Item'], 200)
 
 
 @app.route('/todo/{todo_id}', methods=['DELETE'])
