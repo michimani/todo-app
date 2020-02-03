@@ -3,9 +3,9 @@ import app
 
 class TestGetTodo:
     expected_todo = {
-        'Id': '999999',
-        'Titile': 'Test todo',
-        'Done': 0
+        'todo_id': '999999',
+        'title': 'Test todo',
+        'done': 0
     }
 
     expected_todo_not_found = {

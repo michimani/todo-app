@@ -6,11 +6,11 @@ Resources:
     Type: "AWS::DynamoDB::Table"
     Properties:
       AttributeDefinitions:
-        - AttributeName: "Id"
+        - AttributeName: "todo_id"
           AttributeType: "S"
       BillingMode: "PROVISIONED"
       KeySchema:
-        - AttributeName: "Id"
+        - AttributeName: "todo_id"
           KeyType: "HASH"
       ProvisionedThroughput:
         ReadCapacityUnits: 1

@@ -2,17 +2,18 @@ from chalice import Chalice, Response
 from chalicelib import db
 import time
 import json
+import boto3
 
 app = Chalice(app_name='todo-app')
 
 
-@app.route('/todo', methods=['GET'])
+@app.route('/todos', methods=['GET'])
 def list_todo():
     todos = db.scan_todo()
     return return_response(todos['Items'], 200)
 
 
-@app.route('/todo/{todo_id}', methods=['GET'])
+@app.route('/todos/{todo_id}', methods=['GET'])
 def get_todo(todo_id):
     res = db.get_todo(todo_id)
 
@@ -25,13 +26,13 @@ def get_todo(todo_id):
     return return_response(res['Item'], 200)
 
 
-@app.route('/todo/{todo_id}', methods=['DELETE'])
+@app.route('/todos/{todo_id}', methods=['DELETE'])
 def delete_todo(todo_id):
     db.delete_todo(todo_id)
     return return_response({}, 200)
 
 
-@app.route('/todo', methods=['PUT'])
+@app.route('/todos', methods=['POST'])
 def add_todo():
     todo_id = str(time.time()).replace('.', '')
     req_body = get_bosy_as_dict()
@@ -43,13 +44,13 @@ def add_todo():
 
     try:
         new_todo = {
-            'Id': todo_id,
-            'Title': req_body['title'],
-            'Done': '0'
+            'todo_id': todo_id,
+            'title': req_body['title'],
+            'done': '0'
         }
 
         if 'content' in req_body:
-            new_todo['Content'] = req_body['content']
+            new_todo['content'] = req_body['content']
 
         res = db.put_todo(new_todo)
 
@@ -60,12 +61,24 @@ def add_todo():
             }, res['ResponseMetadata']['HTTPStatusCode'])
 
         return return_response({
-            'added_todo_id': new_todo['Id'],
+            'added_todo_id': new_todo['todo_id'],
         }, 200)
     except Exception as e:
         return return_response({
             'message': str(e)
         }, 500)
+
+
+@app.route('/dummy', methods=['GET'])
+def dummy():
+    client_db = boto3.client('dynamodb')
+    table_name = db.get_table_name()
+    client_db.scan(TableName=table_name)
+    client_db.put_item(TableName=table_name, Item={
+                       'todo_id': {'S': '0'}, 'title': {'S': 'dummy'}})
+    client_db.get_item(TableName=table_name, Key={'todo_id': '0'})
+    client_db.delete_item(TableName=table_name, Key={'todo_id': '0'})
+    return return_response({'message', 'This is dummy api'}, 200)
 
 
 def get_bosy_as_dict():

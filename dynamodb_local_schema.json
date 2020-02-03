@@ -3,12 +3,12 @@
   "KeySchema": [
     {
       "KeyType": "HASH",
-      "AttributeName": "Id"
+      "AttributeName": "todo_id"
     }
   ],
   "AttributeDefinitions": [
     {
-      "AttributeName": "Id",
+      "AttributeName": "todo_id",
       "AttributeType": "S"
     }
   ],
