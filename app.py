@@ -7,13 +7,13 @@ import boto3
 app = Chalice(app_name='todo-app')
 
 
-@app.route('/todos', methods=['GET'])
+@app.route('/todos', methods=['GET'], api_key_required=True)
 def list_todo():
     todos = db.scan_todo()
     return return_response(todos['Items'], 200)
 
 
-@app.route('/todos/{todo_id}', methods=['GET'])
+@app.route('/todos/{todo_id}', methods=['GET'], api_key_required=True)
 def get_todo(todo_id):
     res = db.get_todo(todo_id)
 
@@ -26,13 +26,13 @@ def get_todo(todo_id):
     return return_response(res['Item'], 200)
 
 
-@app.route('/todos/{todo_id}', methods=['DELETE'])
+@app.route('/todos/{todo_id}', methods=['DELETE'], api_key_required=True)
 def delete_todo(todo_id):
     db.delete_todo(todo_id)
     return return_response({}, 200)
 
 
-@app.route('/todos', methods=['POST'])
+@app.route('/todos', methods=['POST'], api_key_required=True)
 def add_todo():
     todo_id = str(time.time()).replace('.', '')
     req_body = get_bosy_as_dict()
@@ -69,7 +69,7 @@ def add_todo():
         }, 500)
 
 
-@app.route('/dummy', methods=['GET'])
+@app.route('/dummy', methods=['GET'], api_key_required=True)
 def dummy():
     client_db = boto3.client('dynamodb')
     table_name = db.get_table_name()
