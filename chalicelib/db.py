@@ -30,6 +30,17 @@ def get_todo(user_id, todo_id):
     return db.get_item(Key={'user_id': user_id, 'todo_id': todo_id})
 
 
+def update_todo(user_id, todo_id, patch_data):
+    current_todo_res = get_todo(user_id, todo_id)
+    if current_todo_res['ResponseMetadata']['HTTPStatusCode'] != 200:
+        return current_todo_res
+
+    target_todo = current_todo_res['Item']
+    target_todo.update(patch_data)
+    db = get_db()
+    return db.put_item(Item=target_todo)
+
+
 def put_todo(todo_data):
     db = get_db()
     return db.put_item(

@@ -81,6 +81,43 @@ paths:
           description: 'Not Found'
         '500':
           description: 'Internal Server Error'
+    patch:
+      summary: 'update a todo'
+      description: 'Update a todo by todo ID'
+      parameters:
+        - $ref: '#/components/parameters/todo_id'
+        - name: title
+          in: body
+          description: 'Title for new todo.'
+          required: false
+          schema:
+            type: string
+            example: 'Buy two tickets'
+        - name: content
+          in: body
+          description: 'Content (description, detail...) for a new todo.'
+          required: false
+          schema:
+            type: string
+            example: 'These tickets cost $100.'
+        - name: done
+          in: body
+          description: 'Flag of done. "0" means not done, "1" means done.'
+          required: false
+          schema:
+            type: string
+            example: '1'
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/TodoItem'
+        '404':
+          description: 'Not Found'
+        '500':
+          description: 'Internal Server Error'
     delete:
       summary: 'delete a todo'
       description: 'Delete a todo by todo ID'
@@ -110,6 +147,10 @@ components:
       type: object
       description: 'a todo'
       properties:
+        user_id:
+          type: string
+          description: 'User ID'
+          example: 'abcdefg12345678'
         todo_id:
           type: string
           description: 'Todo ID'
