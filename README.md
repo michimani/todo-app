@@ -45,7 +45,7 @@ $ python -m pytest
 
 # Deploy to AWS
 
-1. create table
+1. create DynamoDB table
 
     ```zsh
     $ sh ./cfn/00-dynamodb.sh deploy
@@ -56,3 +56,37 @@ $ python -m pytest
     ```zsh
     $ chalice deploy
     ```
+
+3. create API Gateway Usage Plan
+
+    ```zsh
+    $ sh ./cfn/01-api-usage-plan.sh deploy
+    ```
+
+    If creating usage plan successfully, ID of created usage plan will be outputed. 
+
+    ```
+    ...
+    ----------------------------------------------
+
+    Following string is ID of created usage plan. Use it for creating api key belongs to an usage plan. Use it in next step.
+
+    abcd1234
+    ```
+
+4. generate API Key
+
+    ```zsh
+    $ sh ./generate_api_key.sh user1 abcd1234
+    API Key generated successfully.
+    {
+        "id": "abscdefg123",
+        "value": "abcdefghijklmnopqrstuvwxyz1234567890",
+        "name": "user1",
+        "enabled": true,
+        "createdDate": 1580802241,
+        "lastUpdatedDate": 1580802241,
+        "stageKeys": []
+    }
+    ```
+
