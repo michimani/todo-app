@@ -3,19 +3,22 @@ from chalicelib import db
 import time
 import json
 import boto3
+import hashlib
 
 app = Chalice(app_name='todo-app')
 
 
 @app.route('/todos', methods=['GET'], api_key_required=True)
-def list_todo():
-    todos = db.scan_todo()
+def get_todos():
+    user_id = get_user_id()
+    todos = db.get_todos(user_id)
     return return_response(todos['Items'], 200)
 
 
 @app.route('/todos/{todo_id}', methods=['GET'], api_key_required=True)
 def get_todo(todo_id):
-    res = db.get_todo(todo_id)
+    user_id = get_user_id()
+    res = db.get_todo(user_id, todo_id)
 
     if 'Item' not in res:
         return return_response({
@@ -28,12 +31,14 @@ def get_todo(todo_id):
 
 @app.route('/todos/{todo_id}', methods=['DELETE'], api_key_required=True)
 def delete_todo(todo_id):
-    db.delete_todo(todo_id)
+    user_id = get_user_id()
+    db.delete_todo(user_id, todo_id)
     return return_response({}, 200)
 
 
 @app.route('/todos', methods=['POST'], api_key_required=True)
 def add_todo():
+    user_id = get_user_id()
     todo_id = str(time.time()).replace('.', '')
     req_body = get_bosy_as_dict()
 
@@ -44,6 +49,7 @@ def add_todo():
 
     try:
         new_todo = {
+            'user_id': user_id,
             'todo_id': todo_id,
             'title': req_body['title'],
             'done': '0'
@@ -69,16 +75,9 @@ def add_todo():
         }, 500)
 
 
-@app.route('/dummy', methods=['GET'], api_key_required=True)
-def dummy():
-    client_db = boto3.client('dynamodb')
-    table_name = db.get_table_name()
-    client_db.scan(TableName=table_name)
-    client_db.put_item(TableName=table_name, Item={
-                       'todo_id': {'S': '0'}, 'title': {'S': 'dummy'}})
-    client_db.get_item(TableName=table_name, Key={'todo_id': '0'})
-    client_db.delete_item(TableName=table_name, Key={'todo_id': '0'})
-    return return_response({'message', 'This is dummy api'}, 200)
+def get_user_id():
+    return hashlib.sha1(
+        app.current_request.headers['x-api-key'].encode('utf-8')).hexdigest()
 
 
 def get_bosy_as_dict():

@@ -3,10 +3,18 @@
   "KeySchema": [
     {
       "KeyType": "HASH",
+      "AttributeName": "user_id"
+    },
+    {
+      "KeyType": "RANGE",
       "AttributeName": "todo_id"
     }
   ],
   "AttributeDefinitions": [
+    {
+      "AttributeName": "user_id",
+      "AttributeType": "S"
+    },
     {
       "AttributeName": "todo_id",
       "AttributeType": "S"

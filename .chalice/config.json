@@ -10,6 +10,8 @@
       }
     },
     "prod": {
+      "autogen_policy": false,
+      "iam_policy_file": "policy-prod.json",
       "environment_variables": {
         "DB_TABLE_NAME": "todos"
       }

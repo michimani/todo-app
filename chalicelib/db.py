@@ -1,5 +1,6 @@
-import os
+from boto3.dynamodb.conditions import Key
 import boto3
+import os
 
 endpoint = os.environ.get('DB_ENDPOINT')
 table_name = os.environ.get('DB_TABLE_NAME')
@@ -18,14 +19,15 @@ def get_table_name():
     return table_name
 
 
-def scan_todo():
+def get_todos(user_id):
     db = get_db()
-    return db.scan()
+    return db.query(
+        KeyConditionExpression=Key('user_id').eq(user_id))
 
 
-def get_todo(todo_id):
+def get_todo(user_id, todo_id):
     db = get_db()
-    return db.get_item(Key={'todo_id': todo_id})
+    return db.get_item(Key={'user_id': user_id, 'todo_id': todo_id})
 
 
 def put_todo(todo_data):
@@ -34,6 +36,6 @@ def put_todo(todo_data):
         Item=todo_data, ConditionExpression='attribute_not_exists(todo_id)')
 
 
-def delete_todo(todo_id):
+def delete_todo(user_id, todo_id):
     db = get_db()
-    return db.delete_item(Key={'todo_id': todo_id})
+    return db.delete_item(Key={'user_id': user_id, 'todo_id': todo_id})

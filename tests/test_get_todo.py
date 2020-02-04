@@ -5,7 +5,8 @@ class TestGetTodo:
     expected_todo = {
         'todo_id': '999999',
         'title': 'Test todo',
-        'done': 0
+        'done': 0,
+        'user_id': '8cb2237d0679ca88db6464eac60da96345513964'
     }
 
     expected_todo_not_found = {
@@ -15,7 +16,11 @@ class TestGetTodo:
     def test_get_todo(self, monkeypatch):
         monkeypatch.setattr(
             'chalicelib.db.get_todo',
-            lambda _: {'Item': self.expected_todo}
+            lambda u, t: {'Item': self.expected_todo}
+        )
+        monkeypatch.setattr(
+            'app.get_user_id',
+            lambda: '8cb2237d0679ca88db6464eac60da96345513964'
         )
 
         actual_todo = app.get_todo('999999')
@@ -25,7 +30,11 @@ class TestGetTodo:
     def test_get_todo_not_found(self, monkeypatch):
         monkeypatch.setattr(
             'chalicelib.db.get_todo',
-            lambda _: {}
+            lambda u, t: {}
+        )
+        monkeypatch.setattr(
+            'app.get_user_id',
+            lambda: '8cb2237d0679ca88db6464eac60da96345513964'
         )
 
         actual_todo = app.get_todo('123')
