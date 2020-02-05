@@ -11,7 +11,12 @@ app = Chalice(app_name='todo-app')
 def get_todos():
     user_id = get_user_id()
     query_params = get_query_params()
-    todos = db.get_todos(user_id)
+
+    if 'done' in query_params.keys() \
+            and str(query_params['done']) in ['0', '1']:
+        todos = db.get_todos_with_done(user_id, query_params['done'])
+    else:
+        todos = db.get_todos(user_id)
 
     filtered_todos = filter_todos(todos['Items'], query_params)
     return return_response(filtered_todos, 200)
@@ -61,6 +66,7 @@ def update_todo(todo_id):
 
     if 'done' in params:
         patch_data['done'] = str(params['done'])
+        patch_data['l_idx_done'] = '{}#{}'.format(str(params['done']), todo_id)
 
     try:
         res = db.update_todo(user_id, todo_id, patch_data)
@@ -103,7 +109,8 @@ def add_todo():
             'user_id': user_id,
             'todo_id': todo_id,
             'title': req_body['title'],
-            'done': '0'
+            'done': '0',
+            'l_idx_done': '{}#{}'.format('0', todo_id)
         }
 
         if 'content' in req_body:
@@ -149,41 +156,30 @@ def get_bosy_as_dict():
 
 
 def filter_todos(todos, params):
-    if 'keyword' not in params.keys() and 'done' not in params.keys():
+    if 'keyword' not in params.keys() or params['keyword'] == '':
         return todos
 
     filtered_todos = list()
-    done_filterd_todos = list()
 
-    if 'done' in params.keys() and str(params['done']) in ['0', '1']:
-        for todo in todos:
-            if todo['done'] == params['done']:
-                done_filterd_todos.append(todo)
-    else:
-        done_filterd_todos = todos
+    target = 'both'
+    if 'target' in params.keys() \
+            and params['target'] in ['title', 'content']:
+        target = params['target']
 
-    if 'keyword' in params.keys() and params['keyword'] != '':
-        target = 'both'
-        if 'target' in params.keys() \
-                and params['target'] in ['title', 'content']:
-            target = params['target']
+    for todo in todos:
+        if target == 'title':
+            search_string = todo['title']
+        elif target == 'content':
+            search_string = ''
+            if 'content' in todo.keys():
+                search_string = todo['content']
+        else:
+            search_string = todo['title']
+            if 'content' in todo.keys():
+                search_string += ' ' + todo['content']
 
-        for f_todo in done_filterd_todos:
-            if target == 'title':
-                search_string = f_todo['title']
-            elif target == 'content':
-                search_string = ''
-                if 'content' in f_todo:
-                    search_string = f_todo['content']
-            else:
-                search_string = f_todo['title']
-                if 'content' in f_todo:
-                    search_string += ' ' + f_todo['content']
-
-            if search_string.find(params['keyword']) > 0:
-                filtered_todos.append(f_todo)
-    else:
-        filtered_todos = done_filterd_todos
+        if search_string.find(params['keyword']) >= 0:
+            filtered_todos.append(todo)
 
     return filtered_todos
 

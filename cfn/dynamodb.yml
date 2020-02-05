@@ -10,12 +10,23 @@ Resources:
           AttributeType: "S"
         - AttributeName: "todo_id"
           AttributeType: "S"
+        - AttributeName: "l_idx_done"
+          AttributeType: "S"
       BillingMode: "PROVISIONED"
       KeySchema:
         - AttributeName: "user_id"
           KeyType: "HASH"
         - AttributeName: "todo_id"
           KeyType: "RANGE"
+      LocalSecondaryIndexes:
+        - IndexName: FilterDoneIndex
+          KeySchema:
+            - AttributeName: "user_id"
+              KeyType: "HASH"
+            - AttributeName: "l_idx_done"
+              KeyType: "RANGE"
+          Projection:
+              ProjectionType: "ALL"
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1

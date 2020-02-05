@@ -25,6 +25,15 @@ def get_todos(user_id):
         KeyConditionExpression=Key('user_id').eq(user_id))
 
 
+def get_todos_with_done(user_id, done):
+    db = get_db()
+    return db.query(
+        IndexName='FilterDoneIndex',
+        KeyConditionExpression=Key('user_id').eq(user_id) &
+        Key('l_idx_done').begins_with(done + '#')
+    )
+
+
 def get_todo(user_id, todo_id):
     db = get_db()
     return db.get_item(Key={'user_id': user_id, 'todo_id': todo_id})
