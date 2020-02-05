@@ -10,8 +10,11 @@ app = Chalice(app_name='todo-app')
 @app.route('/todos', methods=['GET'], api_key_required=True)
 def get_todos():
     user_id = get_user_id()
+    query_params = get_query_params()
     todos = db.get_todos(user_id)
-    return return_response(todos['Items'], 200)
+
+    filtered_todos = filter_todos(todos['Items'], query_params)
+    return return_response(filtered_todos, 200)
 
 
 @app.route('/todos/{todo_id}', methods=['GET'], api_key_required=True)
@@ -128,11 +131,61 @@ def get_user_id():
         app.current_request.headers['x-api-key'].encode('utf-8')).hexdigest()
 
 
+def get_query_params():
+    query_params = dict()
+
+    request_dict = app.current_request.to_dict()
+    if request_dict['query_params'] is not None:
+        query_params = request_dict['query_params']
+
+    return query_params
+
+
 def get_bosy_as_dict():
     try:
         return json.loads(app.current_request.raw_body.decode('utf-8'))
     except Exception:
         return {}
+
+
+def filter_todos(todos, params):
+    if 'keyword' not in params.keys() and 'done' not in params.keys():
+        return todos
+
+    filtered_todos = list()
+    done_filterd_todos = list()
+
+    if 'done' in params.keys() and str(params['done']) in ['0', '1']:
+        for todo in todos:
+            if todo['done'] == params['done']:
+                done_filterd_todos.append(todo)
+    else:
+        done_filterd_todos = todos
+
+    if 'keyword' in params.keys() and params['keyword'] != '':
+        target = 'both'
+        if 'target' in params.keys() \
+                and params['target'] in ['title', 'content']:
+            target = params['target']
+
+        for f_todo in done_filterd_todos:
+            if target == 'title':
+                search_string = f_todo['title']
+            elif target == 'content':
+                search_string = ''
+                if 'content' in f_todo:
+                    search_string = f_todo['content']
+            else:
+                search_string = f_todo['title']
+                if 'content' in f_todo:
+                    search_string += ' ' + f_todo['content']
+
+            if search_string.find(params['keyword']) > 0:
+                filtered_todos.append(f_todo)
+    else:
+        filtered_todos = done_filterd_todos
+
+    return filtered_todos
 
 
 def return_response(body, code):
