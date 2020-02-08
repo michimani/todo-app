@@ -58,4 +58,5 @@ def put_todo(todo_data):
 
 def delete_todo(user_id, todo_id):
     db = get_db()
-    return db.delete_item(Key={'user_id': user_id, 'todo_id': todo_id})
+    return db.delete_item(Key={'user_id': user_id, 'todo_id': todo_id},
+                          ReturnValues='ALL_OLD')

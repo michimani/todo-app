@@ -89,8 +89,19 @@ def update_todo(todo_id):
 @app.route('/todos/{todo_id}', methods=['DELETE'], api_key_required=True)
 def delete_todo(todo_id):
     user_id = get_user_id()
-    db.delete_todo(user_id, todo_id)
-    return return_response({}, 200)
+    res = db.delete_todo(user_id, todo_id)
+    if res['ResponseMetadata']['HTTPStatusCode'] != 200:
+        return return_response({
+            'message': 'Failed to delete a todo.'
+        }, res['ResponseMetadata']['HTTPStatusCode'])
+
+    if 'Attributes' not in res.keys():
+        return return_response({
+            'message': ('not found error: todo with '
+                        'id = {todo_id} was not found').format(todo_id=todo_id)
+        }, 404)
+
+    return return_response(res['Attributes'], 200)
 
 
 @app.route('/todos', methods=['POST'], api_key_required=True)
