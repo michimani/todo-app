@@ -52,8 +52,8 @@ def update_todo(todo_id):
     if ('title' in params and params['title'] == '') \
             or ('done' in params and str(params['done']) not in ['0', '1']):
         return httpres.response_400(('parameter error: invalid value for '
-                                     'one of the following parameters '
-                                     'is required: title, done'))
+                                     'one of the following parameters'
+                                     ': title, done'))
 
     patch_data = {}
     if 'title' in params:
