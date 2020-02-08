@@ -1,4 +1,4 @@
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Key, Attr
 import boto3
 import os
 
@@ -53,7 +53,7 @@ def update_todo(user_id, todo_id, patch_data):
 def put_todo(todo_data):
     db = get_db()
     return db.put_item(
-        Item=todo_data, ConditionExpression='attribute_not_exists(todo_id)')
+        Item=todo_data, ConditionExpression=Attr('todo_id').not_exists())
 
 
 def delete_todo(user_id, todo_id):
