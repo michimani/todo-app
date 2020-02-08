@@ -124,9 +124,7 @@ def add_todo():
                 'response_from_dynamodb': res
             }, res['ResponseMetadata']['HTTPStatusCode'])
 
-        return return_response({
-            'added_todo_id': new_todo['todo_id'],
-        }, 200)
+        return return_response(new_todo, 200)
     except Exception as e:
         return return_response({
             'message': str(e)
