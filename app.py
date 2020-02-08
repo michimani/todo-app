@@ -77,9 +77,7 @@ def update_todo(todo_id):
                 'response_from_dynamodb': res
             }, res['ResponseMetadata']['HTTPStatusCode'])
 
-        return return_response({
-            'update_todo_id': todo_id,
-        }, 200)
+        return return_response(res['Attributes'], 200)
     except Exception as e:
         return return_response({
             'message': str(e)
