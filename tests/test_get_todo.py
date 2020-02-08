@@ -3,10 +3,12 @@ import app
 
 class TestGetTodo:
     expected_todo = {
-        'todo_id': '999999',
-        'title': 'Test todo',
+        'content': 'todo content',
         'done': 0,
-        'user_id': '8cb2237d0679ca88db6464eac60da96345513964'
+        'l_idx_done': '0#999999',
+        'title': 'Test todo',
+        'todo_id': '999999',
+        'user_id': '8cb2237d0679ca88db6464eac60da96345513964',
     }
 
     expected_todo_not_found = {
