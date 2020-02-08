@@ -101,7 +101,7 @@ def delete_todo(todo_id):
 @app.route('/todos', methods=['POST'], api_key_required=True)
 def add_todo():
     user_id = get_user_id()
-    todo_id = str(time.time()).replace('.', '')
+    todo_id = generate_todo_id()
     req_body = get_bosy_as_dict()
 
     if 'title' not in req_body:
@@ -109,16 +109,16 @@ def add_todo():
                                      'the following parameter '
                                      'is required: title'))
 
-        new_todo = {
-            'user_id': user_id,
-            'todo_id': todo_id,
-            'title': req_body['title'],
-            'done': '0',
-            'l_idx_done': '{}#{}'.format('0', todo_id)
-        }
+    new_todo = {
+        'user_id': user_id,
+        'todo_id': todo_id,
+        'title': req_body['title'],
+        'done': '0',
+        'l_idx_done': '{}#{}'.format('0', todo_id)
+    }
 
-        if 'content' in req_body:
-            new_todo['content'] = req_body['content']
+    if 'content' in req_body:
+        new_todo['content'] = req_body['content']
 
     try:
         res = db.put_todo(new_todo)
@@ -131,6 +131,10 @@ def add_todo():
         return httpres.response_200(new_todo)
     except Exception as e:
         return httpres.response_500(e)
+
+
+def generate_todo_id():
+    return str(time.time()).replace('.', '')
 
 
 def get_user_id():

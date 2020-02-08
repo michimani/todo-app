@@ -4,7 +4,7 @@ import app
 class TestGetTodo:
     expected_todo = {
         'content': 'todo content',
-        'done': 0,
+        'done': '0',
         'l_idx_done': '0#999999',
         'title': 'Test todo',
         'todo_id': '999999',
