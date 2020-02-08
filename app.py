@@ -134,7 +134,7 @@ def add_todo():
 
 
 def generate_todo_id():
-    return str(time.time()).replace('.', '')
+    return str(time.time()).replace('.', '')[:13].ljust(13, '0')
 
 
 def get_user_id():
