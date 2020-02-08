@@ -78,4 +78,11 @@ def put_todo(todo_data):
 def delete_todo(user_id, todo_id):
     db = get_db()
     return db.delete_item(Key={'user_id': user_id, 'todo_id': todo_id},
+                          ConditionExpression=Attr('user_id').eq(user_id) &
+                          Attr('todo_id').eq(todo_id),
                           ReturnValues='ALL_OLD')
+
+
+def todo_exists(user_id, todo_id):
+    res = get_todo(user_id, todo_id)
+    return 'Item' in res.keys()

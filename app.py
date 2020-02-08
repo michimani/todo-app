@@ -1,5 +1,6 @@
-from chalice import Chalice, Response
+from chalice import Chalice
 from chalicelib import db
+from chalicelib import httpres
 import time
 import json
 import hashlib
@@ -12,14 +13,14 @@ def get_todos():
     user_id = get_user_id()
     query_params = get_query_params()
 
-    if 'done' in query_params.keys() \
+    if 'done' in query_params \
             and str(query_params['done']) in ['0', '1']:
         todos = db.get_todos_with_done(user_id, query_params['done'])
     else:
         todos = db.get_todos(user_id)
 
     filtered_todos = filter_todos(todos['Items'], query_params)
-    return return_response(filtered_todos, 200)
+    return httpres.response_200(filtered_todos)
 
 
 @app.route('/todos/{todo_id}', methods=['GET'], api_key_required=True)
@@ -28,34 +29,31 @@ def get_todo(todo_id):
     res = db.get_todo(user_id, todo_id)
 
     if 'Item' not in res:
-        return return_response({
-            'message': ('not found error: todo with '
-                        'Id = {todo_id} was not found').format(todo_id=todo_id)
-        }, 404)
+        return httpres.response_404(todo_id)
 
-    return return_response(res['Item'], 200)
+    return httpres.response_200(res['Item'])
 
 
 @app.route('/todos/{todo_id}', methods=['PATCH'], api_key_required=True)
 def update_todo(todo_id):
     user_id = get_user_id()
+    if db.todo_exists(user_id, todo_id) is False:
+        return httpres.response_404(todo_id)
+
     params = get_bosy_as_dict()
 
     if 'title' not in params \
             and 'content' not in params \
             and 'done' not in params:
-        return return_response({
-            'message': ('parameter error: one of the following parameters '
-                        'is required: title, content, done'),
-        }, 400)
+        return httpres.response_400(('parameter error: one of the following '
+                                     'parameters is required: '
+                                     'title, content, done'))
 
     if ('title' in params and params['title'] == '') \
             or ('done' in params and str(params['done']) not in ['0', '1']):
-        return return_response({
-            'message': ('parameter error: invalid value for '
-                        'one of the following parameters '
-                        'is required: title, done'),
-        }, 400)
+        return httpres.response_400(('parameter error: invalid value for '
+                                     'one of the following parameters '
+                                     'is required: title, done'))
 
     patch_data = {}
     if 'title' in params:
@@ -72,34 +70,32 @@ def update_todo(todo_id):
         res = db.update_todo(user_id, todo_id, patch_data)
 
         if res['ResponseMetadata']['HTTPStatusCode'] != 200:
-            return return_response({
-                'message': 'Failed to update a todo.',
-                'response_from_dynamodb': res
+            return httpres.response({
+                'message': 'Failed to update a todo.'
             }, res['ResponseMetadata']['HTTPStatusCode'])
 
-        return return_response(res['Attributes'], 200)
+        return httpres.response_200(res['Attributes'])
     except Exception as e:
-        return return_response({
-            'message': str(e)
-        }, 500)
+        return httpres.response_500(e)
 
 
 @app.route('/todos/{todo_id}', methods=['DELETE'], api_key_required=True)
 def delete_todo(todo_id):
     user_id = get_user_id()
-    res = db.delete_todo(user_id, todo_id)
-    if res['ResponseMetadata']['HTTPStatusCode'] != 200:
-        return return_response({
-            'message': 'Failed to delete a todo.'
-        }, res['ResponseMetadata']['HTTPStatusCode'])
 
-    if 'Attributes' not in res.keys():
-        return return_response({
-            'message': ('not found error: todo with '
-                        'id = {todo_id} was not found').format(todo_id=todo_id)
-        }, 404)
+    if db.todo_exists(user_id, todo_id) is False:
+        return httpres.response_404(todo_id)
 
-    return return_response(res['Attributes'], 200)
+    try:
+        res = db.delete_todo(user_id, todo_id)
+        if res['ResponseMetadata']['HTTPStatusCode'] != 200:
+            return httpres.response({
+                'message': 'Failed to delete a todo.'
+            }, res['ResponseMetadata']['HTTPStatusCode'])
+
+        return httpres.response_200(res['Attributes'])
+    except Exception as e:
+        return httpres.response_500(e)
 
 
 @app.route('/todos', methods=['POST'], api_key_required=True)
@@ -109,11 +105,10 @@ def add_todo():
     req_body = get_bosy_as_dict()
 
     if 'title' not in req_body:
-        return return_response({
-            'message': 'key error: the following parameter is required: title',
-        }, 400)
+        return httpres.response_400(('key error: '
+                                     'the following parameter '
+                                     'is required: title'))
 
-    try:
         new_todo = {
             'user_id': user_id,
             'todo_id': todo_id,
@@ -125,19 +120,17 @@ def add_todo():
         if 'content' in req_body:
             new_todo['content'] = req_body['content']
 
+    try:
         res = db.put_todo(new_todo)
 
         if res['ResponseMetadata']['HTTPStatusCode'] != 200:
-            return return_response({
-                'message': 'Failed to add a todo.',
-                'response_from_dynamodb': res
+            return httpres.response({
+                'message': 'Failed to add a todo.'
             }, res['ResponseMetadata']['HTTPStatusCode'])
 
-        return return_response(new_todo, 200)
+        return httpres.response_200(new_todo)
     except Exception as e:
-        return return_response({
-            'message': str(e)
-        }, 500)
+        return httpres.response_500(e)
 
 
 def get_user_id():
@@ -163,13 +156,13 @@ def get_bosy_as_dict():
 
 
 def filter_todos(todos, params):
-    if 'keyword' not in params.keys() or params['keyword'] == '':
+    if 'keyword' not in params or params['keyword'] == '':
         return todos
 
     filtered_todos = list()
 
     target = 'both'
-    if 'target' in params.keys() \
+    if 'target' in params \
             and params['target'] in ['title', 'content']:
         target = params['target']
 
@@ -178,20 +171,14 @@ def filter_todos(todos, params):
             search_string = todo['title']
         elif target == 'content':
             search_string = ''
-            if 'content' in todo.keys():
+            if 'content' in todo:
                 search_string = todo['content']
         else:
             search_string = todo['title']
-            if 'content' in todo.keys():
+            if 'content' in todo:
                 search_string += ' ' + todo['content']
 
         if search_string.find(params['keyword']) >= 0:
             filtered_todos.append(todo)
 
     return filtered_todos
-
-
-def return_response(body, code):
-    return Response(body=body,
-                    status_code=code,
-                    headers={'Content-Type': 'application/json'})
