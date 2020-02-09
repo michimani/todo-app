@@ -17,7 +17,7 @@ todo-app
   
     ```zsh
     $ aws dynamodb create-table \
-    --cli-input-json file://dynamodb_local_schema.json \
+    --cli-input-json file://local/dynamodb_local_schema.json \
     --endpoint-url http://localhost:8001
     ```
 
@@ -39,8 +39,10 @@ todo-app
 
 # Test
 
+## Unit test
+
 ```zsh
-$ python -m pytest
+$ python -m pytest ./tests/0_unit_tests/
 ```
 
 # Deploy to AWS
@@ -54,7 +56,7 @@ $ python -m pytest
 2. deploy app
 
     ```zsh
-    $ chalice deploy
+    $ chalice deploy --stage prod
     ```
 
 3. create API Gateway Usage Plan
