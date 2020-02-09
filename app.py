@@ -100,7 +100,7 @@ def add_todo():
     todo_id = generate_todo_id()
     req_body = get_bosy_as_dict()
 
-    if 'title' not in req_body:
+    if 'title' not in req_body or req_body['title'] == '':
         return httpres.response_400('key error: the following parameter is required: title')
 
     new_todo = {
