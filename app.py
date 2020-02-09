@@ -42,17 +42,13 @@ def update_todo(todo_id):
 
     params = get_bosy_as_dict()
 
-    if 'title' not in params \
-            and 'content' not in params \
-            and 'done' not in params:
-        return httpres.response_400(('parameter error: one of the following '
-                                     'parameters is required: '
+    if 'title' not in params and 'content' not in params and 'done' not in params:
+        return httpres.response_400(('parameter error: one of the following parameters is required: '
                                      'title, content, done'))
 
     if ('title' in params and params['title'] == '') \
             or ('done' in params and str(params['done']) not in ['0', '1']):
-        return httpres.response_400(('parameter error: invalid value for '
-                                     'one of the following parameters'
+        return httpres.response_400(('parameter error: invalid value for one of the following parameters'
                                      ': title, done'))
 
     patch_data = {}
@@ -105,9 +101,7 @@ def add_todo():
     req_body = get_bosy_as_dict()
 
     if 'title' not in req_body:
-        return httpres.response_400(('key error: '
-                                     'the following parameter '
-                                     'is required: title'))
+        return httpres.response_400('key error: the following parameter is required: title')
 
     new_todo = {
         'user_id': user_id,
@@ -138,8 +132,7 @@ def generate_todo_id():
 
 
 def get_user_id():
-    return hashlib.sha1(
-        app.current_request.headers['x-api-key'].encode('utf-8')).hexdigest()
+    return hashlib.sha1(app.current_request.headers['x-api-key'].encode('utf-8')).hexdigest()
 
 
 def get_query_params():
@@ -166,8 +159,7 @@ def filter_todos(todos, params):
     filtered_todos = list()
 
     target = 'both'
-    if 'target' in params \
-            and params['target'] in ['title', 'content']:
+    if 'target' in params and params['target'] in ['title', 'content']:
         target = params['target']
 
     for todo in todos:

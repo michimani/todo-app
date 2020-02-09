@@ -25,16 +25,13 @@ class TestUpdateTodo:
             'RetryAttempts': 0},
         'Attributes': expected_todo}
 
-    expected_not_found_error = ('not found error: todo with '
-                                'Id = 123 was not found')
+    expected_not_found_error = 'not found error: todo with Id = 123 was not found'
 
-    expected_not_enough_params_error = ('parameter error: one of the '
-                                        'following parameters is required: '
-                                        'title, content, done')
+    expected_not_enough_params_error = ('parameter error: one of the following parameters '
+                                        'is required: title, content, done')
 
-    expected_invalid_value_params_error = ('parameter error: invalid value for'
-                                           ' one of the following parameters'
-                                           ': title, done')
+    expected_invalid_value_params_error = ('parameter error: invalid value for one of '
+                                           'the following parameters: title, done')
 
     valid_request_body_dict = {
         'content': 'todo content',
@@ -44,13 +41,9 @@ class TestUpdateTodo:
 
     invalid_request_body_dict_empty = {}
 
-    invalid_request_body_dict_invaid_value_title = {
-        'title': ''
-    }
+    invalid_request_body_dict_invaid_value_title = {'title': ''}
 
-    invalid_request_body_dict_invaid_value_done = {
-        'done': '4'
-    }
+    invalid_request_body_dict_invaid_value_done = {'done': '4'}
 
     def test_update_todo(self, monkeypatch):
         self.set_monkeypatch_with_req_body(

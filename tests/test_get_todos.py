@@ -164,8 +164,8 @@ class TestGetTodos:
         )
         monkeypatch.setattr(
             'chalicelib.db.get_todos_with_done',
-            lambda u, d: {'Items': self.done_todos if done ==
-                          '1' else self.not_done_todos}
+            lambda u, d: {
+                'Items': self.done_todos if done == '1' else self.not_done_todos}
         )
         monkeypatch.setattr(
             'app.get_user_id',

@@ -14,8 +14,7 @@ def response_400(message):
 
 def response_404(todo_id):
     return response({
-        'message': ('not found error: todo with '
-                    'Id = {todo_id} was not found').format(todo_id=todo_id)
+        'message': 'not found error: todo with Id = {todo_id} was not found'.format(todo_id=todo_id)
     }, 404)
 
 

@@ -25,8 +25,7 @@ class TestDeleteTodo:
             'RetryAttempts': 0},
         'Attributes': expected_todo}
 
-    expected_not_found_error = ('not found error: todo with '
-                                'Id = 123 was not found')
+    expected_not_found_error = 'not found error: todo with Id = 123 was not found'
 
     def test_delete_todo(self, monkeypatch):
         self.set_monkeypatch_attrs(monkeypatch, exists=True)

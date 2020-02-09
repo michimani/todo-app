@@ -35,9 +35,7 @@ class TestAddTodo:
 
     invalid_request_body_dict_empty = {}
 
-    invalid_request_body_dict_not_enough = {
-        'content': ''
-    }
+    invalid_request_body_dict_not_enough = {'content': ''}
 
     def test_add_todo(self, monkeypatch):
         self.set_monkeypatch_with_req_body(
