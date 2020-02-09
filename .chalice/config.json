@@ -3,6 +3,12 @@
   "app_name": "todo-app",
   "api_gateway_stage": "api",
   "stages": {
+    "test": {
+      "environment_variables": {
+        "DB_ENDPOINT": "http://localhost:8001",
+        "DB_TABLE_NAME": "todos_test"
+      }
+    },
     "dev": {
       "environment_variables": {
         "DB_ENDPOINT": "http://localhost:8001",

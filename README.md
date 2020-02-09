@@ -45,6 +45,49 @@ todo-app
 $ python -m pytest ./tests/0_unit_tests/
 ```
 
+## API test
+
+0. start DynamoDB local
+
+    ```zsh
+    $ sh start_local_db.sh
+    ```
+
+1. create table for test
+
+    If *todos_test* table has already exists, delete it.
+    
+    ```zsh
+    $ aws dynamodb delete-table --table-name todos_test \
+    --endpoint-url http://localhost:8001
+    ```
+    
+    Create *todos_test* table.
+
+    ```zsh
+    $ aws dynamodb create-table --cli-input-json file://local/dynamodb_local_for_test_schema.json \
+    --endpoint-url http://localhost:8001
+    ```
+
+2. insert test data
+
+    ```zsh
+    $ aws dynamodb batch-write-item --request-items file://local/initial_data.json \
+    --endpoint-url http://localhost:8001
+    ```
+
+3. run at local with stage `test`
+
+    ```zsh
+    $ chalice local --stage test
+    ```
+    
+4. test
+
+    ```zsh
+    $ python -m pytest ./tests/1_api_tests/
+    ```
+
 # Deploy to AWS
 
 1. create DynamoDB table

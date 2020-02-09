@@ -1,0 +1,49 @@
+{
+  "TableName": "todos_test",
+  "KeySchema": [
+    {
+      "KeyType": "HASH",
+      "AttributeName": "user_id"
+    },
+    {
+      "KeyType": "RANGE",
+      "AttributeName": "todo_id"
+    }
+  ],
+  "LocalSecondaryIndexes": [
+    {
+      "IndexName": "FilterDoneIndex",
+      "KeySchema": [
+        {
+          "KeyType": "HASH",
+          "AttributeName": "user_id"
+        },
+        {
+          "AttributeName": "l_idx_done",
+          "KeyType": "RANGE"
+        }
+      ],
+      "Projection": {
+        "ProjectionType": "ALL"
+      }
+    }
+  ],
+  "AttributeDefinitions": [
+    {
+      "AttributeName": "user_id",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "todo_id",
+      "AttributeType": "S"
+    },
+    {
+      "AttributeName": "l_idx_done",
+      "AttributeType": "S"
+    }
+  ],
+  "ProvisionedThroughput": {
+    "ReadCapacityUnits": 100,
+    "WriteCapacityUnits": 100
+  }
+}
