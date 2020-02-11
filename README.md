@@ -3,6 +3,37 @@ todo-app
 
 # Preparing
 
+## Tools
+
+- AWS CLI
+
+    ```zsh
+    $ aws --version
+    aws-cli/1.17.7 Python/3.7.6 Darwin/18.7.0 botocore/1.14.9
+    ```
+
+- jq
+- Python 3
+    
+    ```zsh
+    $ python3 -V
+    Python 3.7.6
+    ```
+    
+    Creating a virtual environment of Python 3 is recommended. 
+    
+    ```zsh
+    $ python3 -m venv .venv && source ./.venv/bin/activate
+    ```
+    
+    The rest of this README assumes that you are working in that virtual environment.
+
+- Python packages
+
+    ```zsh
+    $ pip install -r requirements.txt
+    ```
+
 ## DynamoDB local
 
 1. download from [DynamoDB (ダウンロード可能バージョン) - Amazon DynamoDB](https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html)
@@ -42,7 +73,7 @@ todo-app
 ## Unit test
 
 ```zsh
-$ python -m pytest ./tests/0_unit_tests/
+$ python -m pytest ./tests/1_unit_tests/
 ```
 
 ## API test
@@ -50,42 +81,25 @@ $ python -m pytest ./tests/0_unit_tests/
 0. start DynamoDB local
 
     ```zsh
-    $ sh start_local_db.sh
+    $ sh ./scripts/start_local_db.sh
     ```
 
-1. create table for test
-
-    If *todos_test* table has already exists, delete it.
-    
-    ```zsh
-    $ aws dynamodb delete-table --table-name todos_test \
-    --endpoint-url http://localhost:8001
-    ```
-    
-    Create *todos_test* table.
+1. create table for test and insert test data
 
     ```zsh
-    $ aws dynamodb create-table --cli-input-json file://local/dynamodb_local_for_test_schema.json \
-    --endpoint-url http://localhost:8001
+    $ sh ./scripts/clean_db_for_api_tests.sh
     ```
 
-2. insert test data
-
-    ```zsh
-    $ aws dynamodb batch-write-item --request-items file://local/initial_data.json \
-    --endpoint-url http://localhost:8001
-    ```
-
-3. run at local with stage `test`
+2. run at local with stage `test`
 
     ```zsh
     $ chalice local --stage test
     ```
     
-4. test
+3. test
 
     ```zsh
-    $ python -m pytest ./tests/1_api_tests/
+    $ python -m pytest ./tests/2_api_tests/
     ```
 
 # Deploy to AWS
@@ -122,7 +136,7 @@ $ python -m pytest ./tests/0_unit_tests/
 4. generate API Key
 
     ```zsh
-    $ sh ./generate_api_key.sh user1 abcd1234
+    $ sh ./scripts/generate_api_key.sh user1 abcd1234
     API Key generated successfully.
     {
         "id": "abscdefg123",
@@ -135,3 +149,16 @@ $ python -m pytest ./tests/0_unit_tests/
     }
     ```
 
+## Delete resources
+
+1. delete chalice app
+
+    ```zsh
+    $ chalice delete --stage prod
+    ```
+
+2. delete CFn stacks
+
+    ```zsh
+    $ sh ./scripts/clean_aws_resources.sh
+    ```

@@ -27,7 +27,16 @@ paths:
             example: 'This ticket costs $50.'
       responses:
         '200':
-          description: success
+          description: 'OK'
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/TodoItem'
+        '400':
+          description: 'Bad Request'
+        '500':
+          description: 'Internal Server Error'
+
     get:
       summary: 'get some todos'
       description: 'Get all todos, or some of them by using query parameters.'
@@ -114,6 +123,8 @@ paths:
             application/json; charset=utf-8:
               schema:
                 $ref: '#/components/schemas/TodoItem'
+        '400':
+          description: 'Bad Request'
         '404':
           description: 'Not Found'
         '500':
@@ -126,6 +137,14 @@ paths:
       responses:
         '200':
           description: 'OK'
+          content:
+            application/json; charset=utf-8:
+              schema:
+                $ref: '#/components/schemas/TodoItem'
+        '404':
+          description: 'Not Found'
+        '500':
+          description: 'Internal Server Error'
 
 components:
   securitySchemes:
@@ -141,7 +160,7 @@ components:
       required: true
       schema:
         type: string
-        example: '1234567890'
+        example: '1234567890123'
   schemas:
     TodoItem:
       type: object
@@ -154,7 +173,7 @@ components:
         todo_id:
           type: string
           description: 'Todo ID'
-          example: '1234567890'
+          example: '1234567890123'
         title:
           type: string
           description: 'Todo title'
@@ -164,6 +183,10 @@ components:
           description: 'Todo content, description'
           example: 'This ticket costs $50.'
         done:
-          type: number
+          type: string
           description: 'Flag of done. "0" means not done, "1" means done.'
           example: '0'
+        l_idx_done:
+          type: string
+          description: 'Attribute for sort key of local secondary index.'
+          example: '0#1234567890123'
