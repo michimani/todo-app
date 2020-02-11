@@ -42,7 +42,7 @@
           "todo_id": {"S": "1100000000001"},
           "done": {"S": "1"},
           "title": {"S": "done todo without content"},
-          "l_idx_done": {"S": "0#1100000000001"}
+          "l_idx_done": {"S": "1#1100000000001"}
         }
       }
     },
@@ -54,7 +54,7 @@
           "done": {"S": "1"},
           "title": {"S": "done todo with content"},
           "content": {"S": "content of done todo"},
-          "l_idx_done": {"S": "0#1110000000001"}
+          "l_idx_done": {"S": "1#1110000000001"}
         }
       }
     },
@@ -77,7 +77,7 @@
           "todo_id": {"S": "1101000000001"},
           "done": {"S": "1"},
           "title": {"S": "完了済みの ToDo"},
-          "l_idx_done": {"S": "0#1101000000001"}
+          "l_idx_done": {"S": "1#1101000000001"}
         }
       }
     },
@@ -87,8 +87,8 @@
           "user_id": {"S": "51eac6b471a284d3341d8c0c63d0f1a286262a18"},
           "todo_id": {"S": "1011000000001"},
           "done": {"S": "0"},
-          "title": {"S": "完了済みの ToDo"},
-          "content": {"S": "別のユーザの ToDo"},
+          "title": {"S": "別のユーザ ToDo"},
+          "content": {"S": "別のユーザの ToDo です"},
           "l_idx_done": {"S": "0#1011000000001"}
         }
       }
