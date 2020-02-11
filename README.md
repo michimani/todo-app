@@ -1,6 +1,10 @@
 todo-app
 ===
 
+Please see `docs/ARCHITECTURE.md` for architecture, and see [https://michimani.github.io/todo-app/todo-app-api-reference/](https://michimani.github.io/todo-app/todo-app-api-reference/) for API reference.
+
+
+
 # Preparing
 
 ## Tools
@@ -13,6 +17,7 @@ todo-app
     ```
 
 - jq
+    
 - Python 3
     
     ```zsh
@@ -33,6 +38,12 @@ todo-app
     ```zsh
     $ pip install -r requirements.txt
     ```
+
+- HTTPie
+    
+    This is a command line HTTP client that replaces curl. Although not required, it simplifies HTTP requests from the command line.
+    
+    [HTTPie – command line HTTP client](https://httpie.org/)
 
 ## DynamoDB local
 
