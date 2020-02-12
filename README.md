@@ -7,7 +7,7 @@ Please see `docs/ARCHITECTURE.md` for architecture, and see [https://michimani.g
 
 # Preparing
 
-## Tools
+## Install tools
 
 - AWS CLI
 
@@ -18,7 +18,22 @@ Please see `docs/ARCHITECTURE.md` for architecture, and see [https://michimani.g
 
 - jq
     
-- Python 3
+- HTTPie
+    
+    This is a command line HTTP client that replaces curl. Although not required, it simplifies HTTP requests from the command line.
+    
+    [HTTPie – command line HTTP client](https://httpie.org/)
+
+## Clone repository
+
+1. Clone this repository
+
+    ```zsh
+    $ git clone https://github.com/michimani/todo-app.git
+    $ cd todo-app
+    ```
+
+2. Creating a virtual environment of Python 3
     
     ```zsh
     $ python3 -V
@@ -33,29 +48,24 @@ Please see `docs/ARCHITECTURE.md` for architecture, and see [https://michimani.g
     
     The rest of this README assumes that you are working in that virtual environment.
 
-- Python packages
+3. Install Python packages
 
     ```zsh
     $ pip install -r requirements.txt
     ```
 
-- HTTPie
-    
-    This is a command line HTTP client that replaces curl. Although not required, it simplifies HTTP requests from the command line.
-    
-    [HTTPie – command line HTTP client](https://httpie.org/)
+## Setup DynamoDB local
 
-## DynamoDB local
+1. Download DynamoDB local from [DynamoDB (ダウンロード可能バージョン) - Amazon DynamoDB](https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html)
 
-1. download from [DynamoDB (ダウンロード可能バージョン) - Amazon DynamoDB](https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html)
-2. run following command
+2. Run following command to start DynamoDB local
   
     ```zsh
     $ export DYNAMODB_LOCAL_DIR=your_dynamo_db_local_path
     $ sh start_local_db.sh
     ```
 
-3. create table
+3. Create table
   
     ```zsh
     $ aws dynamodb create-table \
@@ -65,13 +75,13 @@ Please see `docs/ARCHITECTURE.md` for architecture, and see [https://michimani.g
 
 # Run at local
 
-1. start DynamoDB local
+1. Start DynamoDB local
 
     ```zsh
     $ sh start_local_db.sh
     ```
 
-2. run following command
+2. Run following command to start app
 
     ```zsh
     $ chalice local --stage dev
@@ -89,25 +99,25 @@ $ python -m pytest ./tests/1_unit_tests/
 
 ## API test
 
-0. start DynamoDB local
+0. Start DynamoDB local
 
     ```zsh
     $ sh ./scripts/start_local_db.sh
     ```
 
-1. create table for test and insert test data
+1. Create table for test and insert test data
 
     ```zsh
     $ sh ./scripts/clean_db_for_api_tests.sh
     ```
 
-2. run at local with stage `test`
+2. Run at local with stage `test`
 
     ```zsh
     $ chalice local --stage test
     ```
     
-3. test
+3. Test
 
     ```zsh
     $ python -m pytest ./tests/2_api_tests/
@@ -115,19 +125,19 @@ $ python -m pytest ./tests/1_unit_tests/
 
 # Deploy to AWS
 
-1. create DynamoDB table
+1. Create DynamoDB table
 
     ```zsh
     $ sh ./cfn/00-dynamodb.sh deploy
     ```
 
-2. deploy app
+2. Deploy app
 
     ```zsh
     $ chalice deploy --stage prod
     ```
 
-3. create API Gateway Usage Plan
+3. Create API Gateway Usage Plan
 
     ```zsh
     $ sh ./cfn/01-api-usage-plan.sh deploy
@@ -144,7 +154,7 @@ $ python -m pytest ./tests/1_unit_tests/
     abcd1234
     ```
 
-4. generate API Key
+4. Generate API Key
 
     ```zsh
     $ sh ./scripts/generate_api_key.sh user1 abcd1234
@@ -162,13 +172,13 @@ $ python -m pytest ./tests/1_unit_tests/
 
 ## Delete resources
 
-1. delete chalice app
+1. Delete chalice app
 
     ```zsh
     $ chalice delete --stage prod
     ```
 
-2. delete CFn stacks
+2. Delete CFn stacks
 
     ```zsh
     $ sh ./scripts/clean_aws_resources.sh
