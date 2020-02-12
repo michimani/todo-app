@@ -40,7 +40,7 @@ def update_todo(todo_id):
     if db.todo_exists(user_id, todo_id) is False:
         return httpres.response_404(todo_id)
 
-    params = get_bosy_as_dict()
+    params = get_body_as_dict()
 
     if 'title' not in params and 'content' not in params and 'done' not in params:
         return httpres.response_400(('parameter error: one of the following parameters is required: '
@@ -98,7 +98,7 @@ def delete_todo(todo_id):
 def add_todo():
     user_id = get_user_id()
     todo_id = generate_todo_id()
-    req_body = get_bosy_as_dict()
+    req_body = get_body_as_dict()
 
     if 'title' not in req_body or req_body['title'] == '':
         return httpres.response_400('key error: the following parameter is required: title')
@@ -145,7 +145,7 @@ def get_query_params():
     return query_params
 
 
-def get_bosy_as_dict():
+def get_body_as_dict():
     try:
         return json.loads(app.current_request.raw_body.decode('utf-8'))
     except Exception:

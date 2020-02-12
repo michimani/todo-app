@@ -80,6 +80,6 @@ class TestAddTodo:
             lambda: '8cb2237d0679ca88db6464eac60da96345513964'
         )
         monkeypatch.setattr(
-            'app.get_bosy_as_dict',
+            'app.get_body_as_dict',
             lambda: req_body
         )
