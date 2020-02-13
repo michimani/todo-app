@@ -5,7 +5,7 @@ Architecture of todo-app
 
 - Use **AWS Chalice** to create Amazon API Gateway and AWS Lambda functions.  
   [Getting Started — Python Serverless Microframework for AWS 1.12.0 documentation](https://chalice.readthedocs.io/en/latest/)
-- Use **CloudFormation** to create Amazon DynamoDB and a Usage Plan in API Gateway.
+- Use **CloudFormation** to create Amazon DynamoDB table, a Usage Plan in API Gateway and some resources related to using custom domain for example Route 53 record set.
 
 ## About DynamoDB table
 
