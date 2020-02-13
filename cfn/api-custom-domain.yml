@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "API Gateway/Route 53 - custom domain for todo-app"
+
+Parameters:
+  AcmArn:
+    Type: String
+  CustomDomainName:
+    Type: String
+  ChaliceDeployedApi:
+    Type: String
+  DomainHostZoneId:
+    Type: String
+
+Resources:
+  TodoAppDomainName:
+    Type: "AWS::ApiGateway::DomainName"
+    Properties:
+      CertificateArn: !Ref AcmArn
+      DomainName: !Ref CustomDomainName
+
+  TodoAppBasePathMapping:
+    Type: "AWS::ApiGateway::BasePathMapping"
+    DependsOn: TodoAppDomainName
+    Properties:
+      DomainName: !Ref CustomDomainName
+      RestApiId: !Ref ChaliceDeployedApi
+      Stage: api
+
+  TodoAppRecord:
+    Type: "AWS::Route53::RecordSet"
+    DependsOn: TodoAppDomainName
+    Properties:
+      Name: !Ref CustomDomainName
+      Type: A
+      HostedZoneId: !Ref DomainHostZoneId
+      AliasTarget:
+        DNSName: !GetAtt TodoAppDomainName.DistributionDomainName
+        HostedZoneId: !GetAtt TodoAppDomainName.DistributionHostedZoneId

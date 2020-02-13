@@ -170,7 +170,29 @@ $ python -m pytest ./tests/1_unit_tests/
     }
     ```
 
+5. Use custom domain (option)
+
+    Before executing the following command, please do following actions.
+    
+    - create a host zone in Route 53
+    - create a SSL certificate for the domain you want to use in ACM
+
+    ```zsh
+    $ export TD_ACM_ARN=your_acm_arn
+    $ export TD_CUSTOM_DOMAIN_NAME=your_custom_domain_name
+    $ export TD_DOMAIN_HOST_ZONE_ID=your_domain_host_zone_id
+    $ sh ./cfn/02-api-custom-doman.sh deploy
+    ```
+
 ## Delete resources
+
+0. Delete AWS resources related to custom domain
+
+    If you create resources for using custom domain, please delete them first.
+
+    ```zsh
+    $ aws cloudformation delete-stack --stack-name "TodoApiCustomDomain"
+    ```
 
 1. Delete chalice app
 
@@ -178,7 +200,7 @@ $ python -m pytest ./tests/1_unit_tests/
     $ chalice delete --stage prod
     ```
 
-2. Delete CFn stacks
+2. Delete other AWS resources
 
     ```zsh
     $ sh ./scripts/clean_aws_resources.sh
