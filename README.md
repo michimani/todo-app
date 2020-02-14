@@ -62,7 +62,7 @@ Please see `docs/ARCHITECTURE.md` for architecture, and see [https://michimani.g
   
     ```zsh
     $ export DYNAMODB_LOCAL_DIR=your_dynamo_db_local_path
-    $ sh start_local_db.sh
+    $ sh ./scripts/start_local_db.sh
     ```
 
 3. Create table
@@ -78,7 +78,7 @@ Please see `docs/ARCHITECTURE.md` for architecture, and see [https://michimani.g
 1. Start DynamoDB local
 
     ```zsh
-    $ sh start_local_db.sh
+    $ sh ./scripts/start_local_db.sh
     ```
 
 2. Run following command to start app
