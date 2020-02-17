@@ -20,7 +20,6 @@ Resources:
 
   TodoAppBasePathMapping:
     Type: "AWS::ApiGateway::BasePathMapping"
-    DependsOn: TodoAppDomainName
     Properties:
       DomainName: !Ref CustomDomainName
       RestApiId: !Ref ChaliceDeployedApi
@@ -28,7 +27,6 @@ Resources:
 
   TodoAppRecord:
     Type: "AWS::Route53::RecordSet"
-    DependsOn: TodoAppDomainName
     Properties:
       Name: !Ref CustomDomainName
       Type: A
