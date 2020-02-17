@@ -15,6 +15,13 @@ Please see `docs/ARCHITECTURE.md` for architecture, and see [https://michimani.g
     $ aws --version
     aws-cli/1.17.7 Python/3.7.6 Darwin/18.7.0 botocore/1.14.9
     ```
+    
+    Version 2.0.0 is available.
+    
+    ```zsh
+    $ aws --version
+    aws-cli/2.0.0 Python/3.7.4 Darwin/19.3.0 botocore/2.0.0dev4
+    ```
 
 - jq
     
